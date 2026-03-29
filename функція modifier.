@@ -1,0 +1,26 @@
+import csv
+
+def modifier(filename):
+    # читаємо файл
+    f = open(filename, 'r', encoding='utf-8')
+    reader = csv.DictReader(f)
+    rows = list(reader)
+    f.close()
+
+    headers = reader.fieldnames
+    index = headers.index('first_name') + 1
+    new_headers = headers[:index] + ['fullname'] + headers[index:]
+    new_headers.append('age')
+
+    new_rows = []
+    for row in rows:
+        p = Person(row['surname'], row['first_name'], row['birth_date'], row.get('nickname'))
+        row['fullname'] = p.get_fullname()
+        row['age'] = p.get_age()
+        new_rows.append(row)
+
+    f = open(filename, 'w', encoding='utf-8', newline='')
+    writer = csv.DictWriter(f, fieldnames=new_headers)
+    writer.writeheader()
+    writer.writerows(new_rows)
+    f.close()
